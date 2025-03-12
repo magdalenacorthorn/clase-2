@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Práctica (para la clase)</title>
+        <style>
+            *{ margin:0; padding:0; }
+            body{ text-align: center; font-family: Helvetica, Arial, sans-serif; }
+            h1 { padding:1vh 15vw; }
+            h2, p{ padding:.5vh 0; }
+            header, article, footer{ padding:5vh 0; }
+            header, article{ border-bottom:1px dotted black; }
+            div{ padding:2vh 6vw; }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Tufte refers to data-ink as the non-erasable ink used for the presentation of data</h1>
+        </header>
+        <main>
+            <article>
+                <h2>Evolución del PIB per cápita en surinam</h2>
+                <p>Con una <a href="https://datavizcatalogue.com/ES/metodos/grafica_de_linea.html" target="_blank">gráfica de línea</a></p>
+                <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 570 210">
+                        <g transform="translate(0,195) scale(1,-1)" id="lineas"><!--aquí dentro va la polyline--></g>
+                        <g id="years"><!--aquí dentro van los textos con los años--></g>
+                    </svg>
+                </div>
+            </article>
+            <article>
+                <h2>Población en distintos países de Latinoamérica</h2>
+                <p>Con una <a href="https://datavizcatalogue.com/ES/metodos/graficos_de_barras.html" target="_blank">gráfica de barras</a></p>
+                <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 100" id="barras"><!--aquí dentro van los grupos con rectangulo y textos--></svg>
+                </div> 
+            </article>
+        </main>
+        <footer>
+            <p><small>Revisar lo de Data-Ink Ratio en <a href="https://infovis-wiki.net/wiki/Data-Ink_Ratio" target="_blank">infovis</a></small></p>
+        </footer>
+        <script>
+            //PRIMERA GRÁFICA
+
+            // Datos de https://es.wikipedia.org/wiki/Anexo:Crecimiento_poblacional_de_Santiago_de_Chile
+
+            const lineal = {
+                años: [2000, 2002, 2004, 2006, 2008, 2010, 2012, 2014, 2016, 2018, 2020, 2022],
+                pesos: [3141, 3258, 3245, 4417, 4941, 6583, 7597, 7500, 5207, 5732, 4190, 5489],
+            };
+
+            const graficaLineas = document.querySelector("#lineas");
+
+            let coordenadas = "";
+
+            let momentos = ""
+
+            // la manera de despliegue de las coordenadas del Eje Y nos exige un ajuste, que copiamos de https://stackoverflow.com/questions/39560206/change-0-0-from-svg
+
+            lineal.pesos.forEach((d, i) => {
+                coordenadas += ((i*50)+7) + "," + Math.round(d*0.025) + " ";
+                momentos += `<text x="${i*50}" y="205" font-size="6">${lineal.años[i]}</text> `;
+
+            })
+
+            console.log(coordenadas);
+
+            console.log(momentos);
+
+            graficaLineas.innerHTML += `<polyline points="${coordenadas}" fill="none" stroke="#0090C1" stroke-width="0.5"/>`;
+
+            document.querySelector("#years").innerHTML += momentos;
+
+
+            // SEGUNDA GRÁFICA 
+
+            // Datos de https://datosmacro.expansion.com/pib/surinam
+            const barras = [
+                    {pais:"Chile", numero:19629590},
+                    {pais:"Venezuela", numero:28838499},
+                    {pais:"Bolivia", numero:12388571},
+                    {pais:"Ecuador", numero:18190484},
+                    {pais:"Argentina", numero:45773884 },
+                    {pais:"Perú", numero:34352719},
+                    {pais:"Uruguay", numero:3423108}
+                ]
+
+            const graficaBarras = document.querySelector("#barras");
+
+            barras.forEach((d, i) => {
+                graficaBarras.innerHTML += `<g transform="translate(0,${i*15})">
+                    <rect x="0" y="0" width="${d.numero/120000}" height="10" fill="#A1CDA8" />
+                    <text x="3" y="7" fill="white" font-size="5">${d.pais}</text>
+                    <text x="${(d.numero/120000)+3}" y="7" font-size="6">${new Intl.NumberFormat("es-ES").format(d.numero)} habitantes</text>
+                </g>`
+            });
+        </script>
+    </body>
+</html>
